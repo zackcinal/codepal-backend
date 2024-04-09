@@ -1,4 +1,4 @@
-from .views import Home, ProfileList, DeveloperList, ProfileDetail, FullStackList, BackendList, FrontendList, CreateUserView,UserExperienceList, ProjectList, ReviewDetail, LoginView, VerifyUserView, FollowDetail, ReviewList
+from .views import Home, ProfileList, DeveloperList, ProfileDetail, FullStackList, BackendList, FrontendList, CreateUserView,UserExperienceList, ProjectList, ReviewDetail, LoginView, VerifyUserView, FollowDetail, ReviewList, LikeDetail
 from django.urls import path
 
 urlpatterns = [
@@ -10,11 +10,13 @@ urlpatterns = [
   path('profiles/<int:id>/', ProfileDetail.as_view(), name="profile-detail"),
   path('profiles/<int:id>/projects/', ProjectList.as_view(), name="project-list"),
   path('profiles/<int:id>/reviews/', ReviewList.as_view(), name="reviews-list"),
-  path('profiles/<int:id>/reviews/<int:reviewed_user_id>/', ReviewDetail.as_view(), name='review-detail'),
+  path('reviews/<int:id>/', ReviewDetail.as_view(), name='review-detail'),
   path('developers/', DeveloperList.as_view(), name="developer-list"),
   path('developers/fullstack/', FullStackList.as_view(), name="fullstack-list"),
   path('developers/backend/', BackendList.as_view(), name="backend-list"),
   path('developers/frontend/', FrontendList.as_view(), name="frontend-list"),
   path('developers/userexperience/', UserExperienceList.as_view(), name="ux-list"),
   path('follow/<int:follower_id>/<int:following_id>/', FollowDetail.as_view(), name='follow-detail'),
+  path('likes/', LikeDetail.as_view(), name='like-detail'), # URL for creating likes
+  path('likes/<int:id>/', LikeDetail.as_view(), name='like-delete'),
 ]
