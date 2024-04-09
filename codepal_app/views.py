@@ -4,24 +4,81 @@ from rest_framework import generics, status, permissions
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import PermissionDenied
 from django.contrib.auth import authenticate
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from .models import Profile, Project, Review, Like, Follow
 from .serializers import ProfileSerializer, ProjectSerializer, LikeSerializer, ReviewSerializer, FollowSerializer, UserSerializer
 
 # Create your views here.
-class CreateUserView(generics.CreateAPIView):
-  queryset = User.objects.all()
-  serializer_class = UserSerializer
+# class CreateUserView(generics.CreateAPIView):
+#   queryset = User.objects.all()
+#   serializer_class = UserSerializer
 
-  def create(self, request, *args, **kwargs):
-    response = super().create(request, *args, **kwargs)
-    user = User.objects.get(username=response.data['username'])
-    refresh = RefreshToken.for_user(user)
-    return Response({
-      'refresh': str(refresh),
-      'access': str(refresh.access_token),
-      'user': response.data
-    })
+#   def create(self, request, *args, **kwargs):
+#     response = super().create(request, *args, **kwargs)
+#     user = User.objects.get(username=response.data['username'])
+
+#     # Extract profile-related data from request
+#     profile_data = {
+#         'user': user.id,
+#         'profile_picture': request.data.get('profile_picture', ''),
+#         'description': request.data.get('description', ''),
+#         'location': request.data.get('location', ''),
+#         'portfolio_link': request.data.get('portfolio_link', ''),
+#         'role': request.data.get('role', ''),
+#         'is_developer': request.data.get('is_developer', False)
+#     }
+
+#     # Create a Profile object for the user
+#     profile_serializer = ProfileSerializer(data=profile_data)
+#     if profile_serializer.is_valid():
+#       profile_serializer.save()
+#     else:
+#       return Response(profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+#     refresh = RefreshToken.for_user(user)
+#     return Response({
+#       'refresh': str(refresh),
+#       'access': str(refresh.access_token),
+#       'user': response.data,
+#       'profile': profile_serializer.data
+#     })
+
+class CreateUserView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        user = User.objects.get(username=response.data['username'])
+
+        # Extract profile-related data from request
+        profile_data = {
+            'user': user.id,
+            'profile_picture': request.data.get('profile_picture', ''),
+            'description': request.data.get('description', ''),
+            'location': request.data.get('location', ''),
+            'portfolio_link': request.data.get('portfolio_link', ''),
+            'role': request.data.get('role', ''),
+            'is_developer': request.data.get('is_developer', False)
+        }
+
+        # Create a Profile object for the user
+        profile_serializer = ProfileSerializer(data=profile_data)
+        if profile_serializer.is_valid():
+            profile_serializer.save()
+        else:
+            return Response(profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'user': response.data,
+            'profile': profile_serializer.data  # Serializing profile_serializer
+        }, status=status.HTTP_201_CREATED)
+
 
 # User Login
 class LoginView(APIView):
@@ -53,8 +110,6 @@ class VerifyUserView(APIView):
       'user': UserSerializer(user).data
     })
 
-
-# Define the home view
 class Home(APIView):
   def get(self, request):
     content = {'message': 'Welcome to the codePal API'}
@@ -84,26 +139,21 @@ class UserExperienceList(generics.ListAPIView):
   queryset = Profile.objects.filter(role="UX")
   serializer_class = ProfileSerializer
 
-# class CreateProfile(generics.CreateAPIView):
-
-
-class ProfileDetail(generics.ListAPIView):
+class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    lookup_field = 'id'
 
-    def get_queryset(self):
-        profile_id = self.kwargs['id']
-        return Profile.objects.filter(id=profile_id)
+    def perform_update(self, serializer):
+        profile = self.get_object()
+        if profile.user != self.request.user:
+            raise PermissionDenied({"message": "You do not have permission to edit this profile."})
+        serializer.save()
 
-    # def perform_update(self, serializer):
-    #   cat = self.get_object()
-    #   if cat.user != self.request.user:
-    #     raise PermissionDenied({"message": "You do not have permission to edit this cat."})
-    #   serializer.save()
-
-    # def perform_destroy(self, instance):
-    #   if instance.user != self.request.user:
-    #     raise PermissionDenied({"message": "You do not have permission to delete this cat."})
-    #   instance.delete()
+    def perform_destroy(self, instance):
+        if instance.user != self.request.user:
+            raise PermissionDenied({"message": "You do not have permission to delete this profile."})
+        instance.delete()
 
 class ProjectList(generics.ListAPIView):
     serializer_class = ProjectSerializer
@@ -111,18 +161,47 @@ class ProjectList(generics.ListAPIView):
     def get_queryset(self):
         profile_id = self.kwargs['id']
         return Project.objects.filter(id=profile_id)
-
-class OneReview(generics.ListAPIView):
+    
+class ReviewList(generics.ListAPIView):
     serializer_class = ReviewSerializer
 
     def get_queryset(self):
-        profile_id = self.kwargs['id']
-        return Review.objects.filter(reviewed_user = profile_id)
+      profile_id = self.kwargs['id']
+      return Review.objects.filter(reviewed_user_id=profile_id)
+
+class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ReviewSerializer
+    queryset = Review.objects.all()
+    lookup_field = 'id'
     
+    # def get(self, request, id, review_id,):
+    #     review = get_object_or_404(Review, id=reviewed_user_id, id=review_id)
+    #     serializer = ReviewSerializer(review)
+    #     return Response(serializer.data)
+
+    # def retrieve(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     serializer = self.get_serializer(instance)
+    #     return Response(serializer.data)
+
     # def perform_update(self, serializer):
-    #   review = self.get_object()
-    #   if review.user != self.request.user:
-    #     raise PermissionDenied({"message": "You do not have permission to edit this review."})
-    #   serializer.save()
+    #     review = self.get_object()
+    #     if review.reviewer.user != self.request.user:
+    #         raise PermissionDenied({"message": "You do not have permission to edit this review."})
+    #     serializer.save()
+
+    # def perform_destroy(self, instance):
+    #     if instance.reviewer.user != self.request.user:
+    #         raise PermissionDenied({"message": "You do not have permission to delete this review."})
+    #     instance.delete()
     
-    
+class FollowDetail(APIView):
+    def get(self, request, follower_id, following_id):
+        follow = get_object_or_404(Follow, follower_id=follower_id, following_id=following_id)
+        serializer = FollowSerializer(follow)
+        return Response(serializer.data)
+
+    def delete(self, request, follower_id, following_id):
+        follow = get_object_or_404(Follow, follower_id=follower_id, following_id=following_id)
+        follow.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
