@@ -27,9 +27,12 @@ class CreateUserView(generics.CreateAPIView):
             'is_developer': request.data.get('is_developer', False)
         }
 
+        print(profile_data)
+
         # Create a Profile object for the user
         profile_serializer = ProfileSerializer(data=profile_data)
         if profile_serializer.is_valid():
+            print(user)
             profile_serializer.save(user=user)  # Explicitly set the user here
         else:
             return Response(profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
