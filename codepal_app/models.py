@@ -54,3 +54,5 @@ class Follow(models.Model):
 
     def __str__(self):
         return f"{self.following.user.username} Followed by {self.follower.user.username}."
+    
+    
