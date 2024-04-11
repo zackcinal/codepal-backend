@@ -10,10 +10,10 @@ ROLES = (
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_picture = models.CharField("Profile Picture", max_length=1000)
+    profile_picture = models.ImageField("Profile Picture", max_length=1000)
     description = models.CharField("Description", max_length=255)
     location = models.CharField("Location", max_length=30)
-    portfolio_link = models.CharField("Portfolio Link", max_length=1000)
+    portfolio_link = models.URLField("Portfolio Link", max_length=1000)
     role = models.CharField("Role",
                               choices=ROLES,
                               max_length=2,
@@ -53,6 +53,6 @@ class Follow(models.Model):
     following = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='Following')
 
     def __str__(self):
-        return f"{self.following.user.username} Followed by {self.follower.user.username}."
-    
-    
+
+
+        return f"{self.following.user.username} Followed by {self.follower.user.username}"
