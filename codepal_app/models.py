@@ -8,9 +8,12 @@ ROLES = (
     ('UX', 'User Experience Designer')
 )
 
+def upload_to(instance, filename):
+    return 'images/{filename}'.format(filename=filename)
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_picture = models.ImageField("Profile Picture", max_length=1000)
+    profile_picture = models.ImageField(upload_to=upload_to, blank=True, null=True)
     description = models.CharField("Description", max_length=255)
     location = models.CharField("Location", max_length=30)
     portfolio_link = models.URLField("Portfolio Link", max_length=1000)

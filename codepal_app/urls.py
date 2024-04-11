@@ -17,6 +17,6 @@ urlpatterns = [
   path('developers/frontend/', FrontendList.as_view(), name="frontend-list"),
   path('developers/userexperience/', UserExperienceList.as_view(), name="ux-list"),
   path('follow/<int:follower_id>/<int:following_id>/', FollowDetail.as_view(), name='follow-detail'),
-  path('likes/', LikeDetail.as_view(), name='like-detail'), # URL for creating likes
+  path('likes/', LikeDetail.as_view(), name='like-detail'),
   path('likes/<int:id>/', LikeDetail.as_view(), name='like-delete'),
 ]
