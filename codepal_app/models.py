@@ -16,7 +16,7 @@ class Profile(models.Model):
     profile_picture = models.ImageField(upload_to=upload_to, blank=True, null=True)
     description = models.CharField("Description", max_length=255)
     location = models.CharField("Location", max_length=30)
-    portfolio_link = models.URLField("Portfolio Link", max_length=1000)
+    portfolio_link = models.CharField("Portfolio Link", max_length=1000)
     role = models.CharField("Role",
                               choices=ROLES,
                               max_length=2,

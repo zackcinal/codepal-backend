@@ -14,12 +14,12 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = []
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
         user = User.objects.get(username=response.data['username'])
-        # Extract profile-related data from request
+      
         profile_data = {
             'profile_picture': request.data.get('profile_picture', ''),
             'description': request.data.get('description', ''),
@@ -54,6 +54,7 @@ class LoginView(APIView):
   def post(self, request):
     username = request.data.get('username')
     password = request.data.get('password')
+    print(username, password)
     user = authenticate(username=username, password=password)
     if user:
       profile = Profile.objects.get(user=user)
