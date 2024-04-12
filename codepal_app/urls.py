@@ -1,4 +1,4 @@
-from .views import Home, ProfileList, DeveloperList, ProfileDetail, FullStackList, BackendList, FrontendList, CreateUserView,UserExperienceList, ProjectList, ReviewDetail, LoginView, VerifyUserView, FollowDetail, ReviewList, LikeDetail
+from .views import Home, ProfileList, DeveloperList, ProfileDetail, FullStackList, BackendList, FrontendList, CreateUserView,UserExperienceList, ProjectList, ReviewDetail, LoginView, VerifyUserView, FollowDetail, ReviewList, LikeDetail, UserJoinProfile
 from django.urls import path
 
 urlpatterns = [
@@ -6,6 +6,7 @@ urlpatterns = [
   path('users/register/', CreateUserView.as_view(), name='register'),
   path('users/login/', LoginView.as_view(), name='login'),
   path('users/token/refresh/', VerifyUserView.as_view(), name='token_refresh'),
+  path('users/profiles/<int:user_id>/', UserJoinProfile.as_view(), name="joinUserProfile-detail"),
   path('profiles/', ProfileList.as_view(), name="profile-list"),
   path('profiles/<int:id>/', ProfileDetail.as_view(), name="profile-detail"),
   path('profiles/<int:id>/projects/', ProjectList.as_view(), name="project-list"),

@@ -121,10 +121,10 @@ class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
             raise PermissionDenied({"message": "You do not have permission to edit this profile."})
         serializer.save()
 
-    def perform_destroy(self, instance):
-        if instance.user != self.request.user:
-            raise PermissionDenied({"message": "You do not have permission to delete this profile."})
-        instance.delete()
+    # def perform_destroy(self, instance):
+    #     if instance.user != self.request.user:
+    #         raise PermissionDenied({"message": "You do not have permission to delete this profile."})
+    #     instance.delete() DELETE WILL BE IN USER
 
 class ProjectList(generics.ListAPIView):
     serializer_class = ProjectSerializer
@@ -189,3 +189,24 @@ class FollowDetail(APIView):
         follow = get_object_or_404(Follow, follower_id=follower_id, following_id=following_id)
         follow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# class UserJoinProfile(APIView):
+#    def get(self):
+#       user = User.objects.filter(id = self)
+#       profile = Profile.objects.filter(user = self )
+#       serializer_class = ProfileSerializer
+#       serializer_class = UserSerializer
+#       joinedUserInfo = {user, profile}
+#       return joinedUserInfo
+
+class UserJoinProfile(APIView):
+    def get(self, request, user_id):
+        user = User.objects.get(id=user_id)
+        profile = Profile.objects.get(user=user)
+        user_serializer = UserSerializer(user)
+        profile_serializer = ProfileSerializer(profile)
+        joined_user_info = {
+            'user': user_serializer.data,
+            'profile': profile_serializer.data
+        }
+        return Response(joined_user_info)
