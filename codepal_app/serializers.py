@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 class ProfileSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    user = UserSerializer(read_only=True)
     image_url = serializers.ImageField(required=False)
     class Meta:
         model = Profile
