@@ -211,3 +211,26 @@ class UserJoinProfile(APIView):
             'profile': profile_serializer.data
         }
         return Response(joined_user_info)
+
+class FollowsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        profile = get_object_or_404(Profile, user=user)
+
+        # Get profiles who are followers of the authenticated user's profile
+        followers = Profile.objects.filter(Followed__following=profile)
+
+        # Get profiles that are followed by the authenticated user's profile
+        following = Profile.objects.filter(Following__follower=profile)
+
+        # Serialize the data
+        followers_serializer = ProfileSerializer(followers, many=True)
+        following_serializer = ProfileSerializer(following, many=True)
+
+        # Return the data in the desired format
+        return Response({
+            'followers': followers_serializer.data,
+            'following': following_serializer.data
+        })
