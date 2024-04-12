@@ -28,14 +28,10 @@ class CreateUserView(generics.CreateAPIView):
             'role': request.data.get('role', ''),
             'is_developer': request.data.get('is_developer', False)
         }
-
-        print(profile_data)
-
-        # Create a Profile object for the user
         profile_serializer = ProfileSerializer(data=profile_data)
         if profile_serializer.is_valid():
             print(user)
-            profile_serializer.save(user=user)  # Explicitly set the user here
+            profile_serializer.save(user=user)
         else:
             return Response(profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -72,9 +68,9 @@ class VerifyUserView(APIView):
   permission_classes = [permissions.IsAuthenticated]
 
   def get(self, request):
-    user = User.objects.get(username=request.user)  # Fetch user profile
+    user = User.objects.get(username=request.user)
     profile = Profile.objects.get(user=user)
-    refresh = RefreshToken.for_user(request.user)  # Generate new refresh token
+    refresh = RefreshToken.for_user(request.user)
     return Response({
       'refresh': str(refresh),
       'access': str(refresh.access_token),
@@ -127,13 +123,24 @@ class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
     #         raise PermissionDenied({"message": "You do not have permission to delete this profile."})
     #     instance.delete() DELETE WILL BE IN USER
 
-class ProjectList(generics.ListAPIView):
+class ProjectList(generics.ListCreateAPIView):
     serializer_class = ProjectSerializer
 
     def get_queryset(self):
-        profile_id = self.kwargs['id']
-        return Project.objects.filter(id=profile_id)
+      profile_id = self.kwargs.get('id')
+      return Project.objects.filter(profile_id=profile_id)
+
     
+    def post(self, request, id):  # Add 'id' parameter to match the URL pattern
+        profile_id = id  # Get the profile ID from the URL kwargs
+        serializer = ProjectSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(profile_id=profile_id)  # Assuming 'user_id' is the field representing the profile in Project model
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 class LikeDetail(generics.RetrieveUpdateDestroyAPIView):
     def get(self, request, id):
         like = get_object_or_404(Like, id=id)
