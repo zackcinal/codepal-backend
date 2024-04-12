@@ -31,7 +31,7 @@ class Project(models.Model):
     project_image = models.CharField("Project Image", max_length=1000)
     project_description = models.CharField("Project Description", max_length=255)
     project_link = models.CharField("Project Link", max_length=500)
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
