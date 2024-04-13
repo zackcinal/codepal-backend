@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import Profile, Project, Review, Like, Follow
 from django.contrib.auth.models import User
 
+from rest_framework import serializers
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -9,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True},  # Specify password field as write-only
         }     
+    
     def create(self, validated_data):
         user = User.objects.create_user(
             first_name=validated_data['first_name'],
@@ -18,6 +21,20 @@ class UserSerializer(serializers.ModelSerializer):
         )
         print(user)
         return user
+    
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.username = validated_data.get('username', instance.username)
+        password = validated_data.get('password')
+        if password:
+            instance.set_password(password)
+        instance.save()
+        return instance
+
+    def delete(self, instance):
+        instance.delete()
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)

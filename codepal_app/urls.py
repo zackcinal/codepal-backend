@@ -1,9 +1,12 @@
-from .views import Home, ProfileList, DeveloperList, ProfileDetail, FullStackList, BackendList, FrontendList, CreateUserView,UserExperienceList, ProjectList, ReviewDetail, LoginView, VerifyUserView, FollowDetail, ReviewList, LikeDetail, UserJoinProfile, FollowsView
+from .views import Home, ProfileList, DeveloperList, ProfileDetail, FullStackList, BackendList, FrontendList, CreateUserView,UserExperienceList, ProjectList, ReviewDetail, LoginView, VerifyUserView, FollowDetail, ReviewList, LikeDetail, UserJoinProfile, FollowsView, EditUserView ,DeleteUserView
+
 from django.urls import path
 
 urlpatterns = [
   path('', Home.as_view(), name='home'),
   path('users/register/', CreateUserView.as_view(), name='register'),
+  path('users/<int:id>/edit', EditUserView.as_view(), name='edit_user'),
+  path('users/<int:id>/delete/', DeleteUserView.as_view(), name='delete_user'),
   path('users/login/', LoginView.as_view(), name='login'),
   path('users/token/refresh/', VerifyUserView.as_view(), name='token_refresh'),
   path('users/profiles/<int:user_id>/', UserJoinProfile.as_view(), name="joinUserProfile-detail"),
