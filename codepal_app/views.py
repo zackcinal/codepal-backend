@@ -7,6 +7,7 @@ from rest_framework.exceptions import PermissionDenied
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.http import QueryDict
 from .models import Profile, Project, Review, Like, Follow
 from .serializers import ProfileSerializer, ProjectSerializer, LikeSerializer, ReviewSerializer, FollowSerializer, UserSerializer
 
@@ -43,21 +44,62 @@ class CreateUserView(generics.CreateAPIView):
         }, status=status.HTTP_201_CREATED)
 
 
+# class EditUserView(generics.UpdateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#     parser_classes = (MultiPartParser, FormParser)
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def update(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         serializer = self.get_serializer(instance, data=request.data, partial=True)
+#         serializer.is_valid(raise_exception=True)
+#         self.perform_update(serializer)
+#         return Response(serializer.data)
+
+#     def perform_update(self, serializer):
+#         serializer.save()
+
+
+
 class EditUserView(generics.UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = [permissions.IsAuthenticated]
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(serializer.data)
+    def get_object(self):
+        return get_object_or_404(Profile, user=self.request.user)
 
-    def perform_update(self, serializer):
-        serializer.save()
+    def update(self, request, *args, **kwargs):
+        # Log to debug what's actually being received
+        print("Received data:", request.data)
+        return super().update(request, *args, **kwargs)
+# class EditUserView(generics.UpdateAPIView):
+#     queryset = Profile.objects.all()
+#     serializer_class = ProfileSerializer
+#     parser_classes = (  MultiPartParser, FormParser)
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def get_object(self):
+#         profile = get_object_or_404(Profile, user=self.request.user)
+#         return profile
+    
+#     def update(self, request, *args, **kwargs):
+#         if isinstance(request.data, QueryDict):
+#             # If data is multipart, reconstruct the user data into nested format
+#             user_keys = ['first_name', 'last_name', 'username', 'email']  # Add more keys if necessary
+#             user_data = {key: request.data.get(f'user[{key}]') for key in user_keys if f'user[{key}]' in request.data}
+#             nested_data = {'user': user_data}  # Create nested user dictionary
+
+#             # Add other profile data
+#             for key in ['description', 'location', 'portfolio_link', 'role', 'is_developer', 'profile_picture']:
+#                 if key in request.data:
+#                     nested_data[key] = request.data[key]
+
+#             request._full_data = nested_data  # Set the modified data back to request
+
+#         return super().update(request, *args, **kwargs)
 
 
 class DeleteUserView(generics.DestroyAPIView):
