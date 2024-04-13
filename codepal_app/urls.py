@@ -1,4 +1,4 @@
-from .views import Home, ProfileList, DeveloperList, ProfileDetail, FullStackList, BackendList, FrontendList, CreateUserView,UserExperienceList, ProjectList, ReviewDetail, LoginView, VerifyUserView, FollowDetail, ReviewList, LikeDetail, UserJoinProfile, FollowsView, EditUserView ,DeleteUserView
+from .views import Home, ProfileList, DeveloperList, ProfileDetail, FullStackList, BackendList, FrontendList, CreateUserView,UserExperienceList, ProjectList, ReviewDetail, LoginView, VerifyUserView, FollowDetail, ReviewList, LikeDetail, UserJoinProfile, FollowsView, EditUserView ,DeleteUserView, AddFollowerView
 
 from django.urls import path
 
@@ -23,5 +23,6 @@ urlpatterns = [
   path('follow/<int:follower_id>/<int:following_id>/', FollowDetail.as_view(), name='follow-detail'),
   path('likes/', LikeDetail.as_view(), name='like-detail'),
   path('likes/<int:id>/', LikeDetail.as_view(), name='like-delete'),
-  path('follows/', FollowsView.as_view(), name='follows')
+  path('follows/<int:profile_id>/', FollowsView.as_view(), name='follows'),
+  path('follower/<int:follower_id>/follows/<int:follows_id>/', AddFollowerView.as_view(), name='add-follow')
 ]
