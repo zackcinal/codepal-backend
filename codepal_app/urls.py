@@ -5,7 +5,7 @@ from django.urls import path
 urlpatterns = [
   path('', Home.as_view(), name='home'),
   path('users/register/', CreateUserView.as_view(), name='register'),
-  path('users/<int:id>/edit', EditUserView.as_view(), name='edit_user'),
+  path('users/edit/', EditUserView.as_view(), name='edit_user'),
   path('users/<int:id>/delete/', DeleteUserView.as_view(), name='delete_user'),
   path('users/login/', LoginView.as_view(), name='login'),
   path('users/token/refresh/', VerifyUserView.as_view(), name='token_refresh'),
