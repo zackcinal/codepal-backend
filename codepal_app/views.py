@@ -118,11 +118,6 @@ class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
             raise PermissionDenied({"message": "You do not have permission to edit this profile."})
         serializer.save()
 
-    # def perform_destroy(self, instance):
-    #     if instance.user != self.request.user:
-    #         raise PermissionDenied({"message": "You do not have permission to delete this profile."})
-    #     instance.delete() DELETE WILL BE IN USER
-
 class ProjectList(generics.ListCreateAPIView):
     serializer_class = ProjectSerializer
 
@@ -138,7 +133,14 @@ class ProjectList(generics.ListCreateAPIView):
             serializer.save(profile_id=profile_id)  # Assuming 'user_id' is the field representing the profile in Project model
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+  
+class ProjectDelete(generics.RetrieveUpdateDestroyAPIView):
+  queryset = Project.objects.all()
+  serializer_class = ProjectSerializer
+  lookup_field = 'profile_id'
 
+  def perform_destroy(self, instance):
+    instance.delete()
 
 
 class LikeDetail(generics.RetrieveUpdateDestroyAPIView):
