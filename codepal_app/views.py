@@ -19,7 +19,7 @@ class CreateUserView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
         user = User.objects.get(username=response.data['username'])
-      
+
         profile_data = {
             'profile_picture': request.data.get('profile_picture', ''),
             'description': request.data.get('description', ''),
@@ -30,7 +30,6 @@ class CreateUserView(generics.CreateAPIView):
         }
         profile_serializer = ProfileSerializer(data=profile_data)
         if profile_serializer.is_valid():
-            print(user)
             profile_serializer.save(user=user)
         else:
             return Response(profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -42,6 +41,37 @@ class CreateUserView(generics.CreateAPIView):
             'user': response.data,
             'profile': profile_serializer.data
         }, status=status.HTTP_201_CREATED)
+
+
+class EditUserView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [permissions.IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
+class DeleteUserView(generics.DestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
 
 # User Login
 class LoginView(APIView):

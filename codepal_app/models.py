@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
 
 ROLES = (
     ('FS', 'Full Stack Developer'),
@@ -25,6 +28,15 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+@receiver(pre_save, sender=User)
+def capitalize_user_names(sender, instance, **kwargs):
+    instance.first_name = instance.first_name.capitalize()
+    instance.last_name = instance.last_name.capitalize()
+
+@receiver(pre_save, sender=Profile)
+def capitalize_location(sender, instance, **kwargs):
+    instance.location = instance.location.capitalize()
 
 class Project(models.Model):
     title = models.CharField(max_length=50)
