@@ -190,12 +190,20 @@ class LikeDetail(generics.RetrieveUpdateDestroyAPIView):
         like.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-class ReviewList(generics.ListAPIView):
+class ReviewList(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
 
     def get_queryset(self):
       profile_id = self.kwargs['id']
       return Review.objects.filter(reviewed_user_id=profile_id)
+    
+    def perform_create(self, serializer):
+        # Fetch the profile of the logged-in user to set as the reviewer
+        reviewer_profile = get_object_or_404(Profile, user=self.request.user)
+        # Fetch the profile to be reviewed using the ID from the URL
+        reviewed_profile = get_object_or_404(Profile, id=self.kwargs['id'])
+        # Save the new review with the appropriate reviewer and reviewed_user
+        serializer.save(reviewer=reviewer_profile, reviewed_user=reviewed_profile)
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer
