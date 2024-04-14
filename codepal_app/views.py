@@ -44,24 +44,6 @@ class CreateUserView(generics.CreateAPIView):
         }, status=status.HTTP_201_CREATED)
 
 
-# class EditUserView(generics.UpdateAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#     parser_classes = (MultiPartParser, FormParser)
-#     permission_classes = [permissions.IsAuthenticated]
-
-#     def update(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         serializer = self.get_serializer(instance, data=request.data, partial=True)
-#         serializer.is_valid(raise_exception=True)
-#         self.perform_update(serializer)
-#         return Response(serializer.data)
-
-#     def perform_update(self, serializer):
-#         serializer.save()
-
-
-
 class EditUserView(generics.UpdateAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
@@ -75,31 +57,6 @@ class EditUserView(generics.UpdateAPIView):
         # Log to debug what's actually being received
         print("Received data:", request.data)
         return super().update(request, *args, **kwargs)
-# class EditUserView(generics.UpdateAPIView):
-#     queryset = Profile.objects.all()
-#     serializer_class = ProfileSerializer
-#     parser_classes = (  MultiPartParser, FormParser)
-#     permission_classes = [permissions.IsAuthenticated]
-
-#     def get_object(self):
-#         profile = get_object_or_404(Profile, user=self.request.user)
-#         return profile
-    
-#     def update(self, request, *args, **kwargs):
-#         if isinstance(request.data, QueryDict):
-#             # If data is multipart, reconstruct the user data into nested format
-#             user_keys = ['first_name', 'last_name', 'username', 'email']  # Add more keys if necessary
-#             user_data = {key: request.data.get(f'user[{key}]') for key in user_keys if f'user[{key}]' in request.data}
-#             nested_data = {'user': user_data}  # Create nested user dictionary
-
-#             # Add other profile data
-#             for key in ['description', 'location', 'portfolio_link', 'role', 'is_developer', 'profile_picture']:
-#                 if key in request.data:
-#                     nested_data[key] = request.data[key]
-
-#             request._full_data = nested_data  # Set the modified data back to request
-
-#         return super().update(request, *args, **kwargs)
 
 
 class DeleteUserView(generics.DestroyAPIView):
@@ -233,12 +190,20 @@ class LikeDetail(generics.RetrieveUpdateDestroyAPIView):
         like.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-class ReviewList(generics.ListAPIView):
+class ReviewList(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
 
     def get_queryset(self):
       profile_id = self.kwargs['id']
       return Review.objects.filter(reviewed_user_id=profile_id)
+    
+    def perform_create(self, serializer):
+        # Fetch the profile of the logged-in user to set as the reviewer
+        reviewer_profile = get_object_or_404(Profile, user=self.request.user)
+        # Fetch the profile to be reviewed using the ID from the URL
+        reviewed_profile = get_object_or_404(Profile, id=self.kwargs['id'])
+        # Save the new review with the appropriate reviewer and reviewed_user
+        serializer.save(reviewer=reviewer_profile, reviewed_user=reviewed_profile)
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer
@@ -272,15 +237,6 @@ class FollowDetail(APIView):
         follow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# class UserJoinProfile(APIView):
-#    def get(self):
-#       user = User.objects.filter(id = self)
-#       profile = Profile.objects.filter(user = self )
-#       serializer_class = ProfileSerializer
-#       serializer_class = UserSerializer
-#       joinedUserInfo = {user, profile}
-#       return joinedUserInfo
-
 class UserJoinProfile(APIView):
     def get(self, request, user_id):
         user = User.objects.get(id=user_id)
@@ -296,9 +252,9 @@ class UserJoinProfile(APIView):
 class FollowsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
-        profile = get_object_or_404(Profile, user=user)
+    def get(self, request, profile_id):
+        # user = request.user
+        profile = get_object_or_404(Profile, id=profile_id)
 
         # Get profiles who are followers of the authenticated user's profile
         followers = Profile.objects.filter(Followed__following=profile)
@@ -315,3 +271,23 @@ class FollowsView(APIView):
             'followers': followers_serializer.data,
             'following': following_serializer.data
         })
+    
+class AddFollowerView(generics.CreateAPIView):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, follower_id, follows_id):
+        # Fetch the profiles based on the provided IDs
+        follower = get_object_or_404(Profile, id=follower_id)
+        following = get_object_or_404(Profile, id=follows_id)
+
+        # Check if the follow relationship already exists to avoid duplicates
+        if Follow.objects.filter(follower=follower, following=following).exists():
+            return Response({'detail': 'Follow relationship already exists.'}, status=status.HTTP_409_CONFLICT)
+
+        # Create the follow relationship
+        follow = Follow.objects.create(follower=follower, following=following)
+        serializer = self.get_serializer(follow)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

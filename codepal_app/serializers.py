@@ -129,12 +129,15 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ReviewSerializer(serializers.ModelSerializer):
-    reviewer = ProfileSerializer()
-    reviewed_user = ProfileSerializer()
+    reviewer = ProfileSerializer(read_only=True)
+    reviewed_user = ProfileSerializer(read_only=True)
 
     class Meta:
         model = Review
         fields = '__all__'
+
+    def create(self, validated_data):
+        return Review.objects.create(**validated_data)
 
 class LikeSerializer(serializers.ModelSerializer):
     liker = ProfileSerializer()
