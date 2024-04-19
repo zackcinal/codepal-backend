@@ -51,9 +51,9 @@ SIMPLE_JWT = {
 SECRET_KEY = 'django-insecure-xm%pzs-f=79=sy7=e0dyi4k5qqwgd8_7sv-@)r_xg)vul7!2!m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["http://localhost:3000", '127.0.0.1', 'http://127.0.0.1:8000/, ']
+ALLOWED_HOSTS = ['https://codepalga-5698f11ed231.herokuapp.com/',"http://localhost:3000", '127.0.0.1', 'http://127.0.0.1:8000/, ']
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 # Application definition
