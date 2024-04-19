@@ -17,7 +17,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 SECRET_KEY = 'django-insecure-icwi-sxw=7oksdr@fu!o7d#jw9n^kvz!m@44olgyy52xd9v51$'
 
