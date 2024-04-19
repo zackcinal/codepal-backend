@@ -14,7 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from whitenoise.storage import CompressedManifestStaticFilesStorage
-
+from .env import SECRET_KEY
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,7 +50,6 @@ SIMPLE_JWT = {
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-xm%pzs-f=79=sy7=e0dyi4k5qqwgd8_7sv-@)r_xg)vul7!2!m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
