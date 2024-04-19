@@ -53,7 +53,7 @@ SIMPLE_JWT = {
 SECRET_KEY = 'django-insecure-xm%pzs-f=79=sy7=e0dyi4k5qqwgd8_7sv-@)r_xg)vul7!2!m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 STATIC_URL = '/static/'
 
