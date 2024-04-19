@@ -23,7 +23,8 @@ SECRET_KEY = 'django-insecure-icwi-sxw=7oksdr@fu!o7d#jw9n^kvz!m@44olgyy52xd9v51$
 
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
 
-# URL used to access the media
+# URL used to access the media#hello
+
 MEDIA_URL = '/media/'
 
 SIMPLE_JWT = {
