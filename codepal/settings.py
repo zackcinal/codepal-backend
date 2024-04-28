@@ -14,7 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from whitenoise.storage import CompressedManifestStaticFilesStorage
-from codepal.env import SECRET_KEY
+from env import SECRET_KEY
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
