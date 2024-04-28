@@ -56,8 +56,8 @@ STATIC_URL = '/static/'
 
 ALLOWED_HOSTS = ['codepalga-5698f11ed231.herokuapp.com', "http://localhost:3000", '127.0.0.1', 'http://127.0.0.1:8000']
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
-# Application definition
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "https://dev--jovial-macaron-61c636.netlify.app"]
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
