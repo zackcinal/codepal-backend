@@ -21,8 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-SECRET_KEY = 'django-insecure-icwi-sxw=7oksdr@fu!o7d#jw9n^kvz!m@44olgyy52xd9v51$'
-
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
 
 # URL used to access the media#hello
