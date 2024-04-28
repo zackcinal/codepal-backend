@@ -55,7 +55,13 @@ DEBUG = False
 
 STATIC_URL = '/static/'
 
-ALLOWED_HOSTS = ['codepalga-5698f11ed231.herokuapp.com', "http://localhost:3000", '127.0.0.1', 'http://127.0.0.1:8000']
+ALLOWED_HOSTS = [
+    'codepalga-5698f11ed231.herokuapp.com',
+    'localhost',
+    '127.0.0.1',
+    'dev--jovial-macaron-61c636.netlify.app',
+]
+
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "https://dev--jovial-macaron-61c636.netlify.app"]
 
