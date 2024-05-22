@@ -60,10 +60,11 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'dev--jovial-macaron-61c636.netlify.app',
+    "https://dev--jovial-macaron-61c636.netlify.app"
 ]
 
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "https://dev--jovial-macaron-61c636.netlify.app"]
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "https://dev--jovial-macaron-61c636.netlify.app", 'dev--jovial-macaron-61c636.netlify.app']
 
 
 INSTALLED_APPS = [
