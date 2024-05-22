@@ -27,7 +27,6 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
 
 MEDIA_URL = '/media/'
 
-
 SECRET_KEY = os.environ.get('SECRET_KEY') or 'secretoshhh123!!!!!!!!!!!'
 
 SIMPLE_JWT = {
@@ -51,7 +50,7 @@ SIMPLE_JWT = {
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 STATIC_URL = '/static/'
 
