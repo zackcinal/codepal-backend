@@ -28,7 +28,7 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
 MEDIA_URL = '/media/'
 
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY') or 'secretoshhh123!!!!!!!!!!!'
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
@@ -59,12 +59,11 @@ ALLOWED_HOSTS = [
     'codepalga-5698f11ed231.herokuapp.com',
     'localhost',
     '127.0.0.1',
-    'dev--jovial-macaron-61c636.netlify.app',
-    "https://dev--jovial-macaron-61c636.netlify.app"
+    'dev--jovial-macaron-61c636.netlify.app'
 ]
 
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "https://dev--jovial-macaron-61c636.netlify.app", 'dev--jovial-macaron-61c636.netlify.app']
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "https://dev--jovial-macaron-61c636.netlify.app"]
 
 
 INSTALLED_APPS = [
@@ -80,9 +79,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
