@@ -16,19 +16,16 @@ import os
 from whitenoise.storage import CompressedManifestStaticFilesStorage
 import dj_database_url
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
 
-# URL used to access the media#hello
-
+# URL used to access the media
 MEDIA_URL = '/media/'
 
-SECRET_KEY = os.environ.get('SECRET_KEY') or 'secretoshhh123!!!!!!!!!!!'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
@@ -62,9 +59,7 @@ ALLOWED_HOSTS = [
     'dev--jovial-macaron-61c636.netlify.app'
 ]
 
-
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "https://dev--jovial-macaron-61c636.netlify.app"]
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -75,7 +70,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'codepal_app'
+    'codepal_app',
+    'storages',  # Added storages app
 ]
 
 MIDDLEWARE = [
@@ -116,7 +112,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'codepal.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -130,8 +125,6 @@ WSGI_APPLICATION = 'codepal.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -151,7 +144,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -163,11 +155,27 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# AWS S3 Configuration
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = 'your-s3-bucket-name'
+AWS_S3_REGION_NAME = 'your-s3-region'  # e.g., us-east-2
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = 'public-read'
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Media files
+MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
