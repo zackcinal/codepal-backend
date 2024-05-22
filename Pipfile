@@ -3,7 +3,6 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
 django = "*"
 psycopg2-binary = "*"
@@ -12,9 +11,7 @@ djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
 whitenoise = "*"
 gunicorn = "*"
-
-
-
+dj-database-url = "*"
 
 [dev-packages]
 

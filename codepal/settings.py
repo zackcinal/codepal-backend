@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from whitenoise.storage import CompressedManifestStaticFilesStorage
+import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -125,6 +126,11 @@ DATABASES = {
         'NAME': 'codepal_db',
     }
 }
+
+# DATABASES = {
+#     'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+# }
+
 
 
 # Password validation
